@@ -1,129 +1,123 @@
-<style>
-  :root{
-    --oy-premium:#7F4D30; /* баталсан премиум өнгө */
-    --oy-bg:#fff; --oy-text:#111; --oy-muted:#757575;
+//// 0) Толгой дээрх кодыг байрлуулна (аль хэдийн байгаа бол алгас)
+document.getElementById('userCode').textContent = 'код: ' + (localStorage.getItem('oy_reg_code') || '—');
+
+// 1) ЧАТ БИЧИХ ҮЕД МЕНЮ АВТО ХАЛЬДАНА
+const app = document.getElementById('app');
+chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
+chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
+document.getElementById('chatForm')?.addEventListener('submit', ()=> app.classList.add('sidebar-hidden'));
+
+// 2) ХААХ / НЭЭХ
+const closeBtn = document.getElementById('closeBtn');
+const openPill = document.getElementById('openPill');
+closeBtn.addEventListener('click', ()=>{
+  app.style.display = 'none';
+  openPill.style.display = 'inline-block';
+});
+openPill.addEventListener('click', ()=>{
+  app.style.display = 'grid';
+  openPill.style.display = 'none';
+});
+
+// 3) 4 МЕНЮ – идэвхжүүлэх үед зөвхөн тухайн жагсаалтыг харуулах (аль хэдийн байгаа логик дээр нэмэлт баталгаажуулалт)
+guideTabs.addEventListener('click', e=>{
+  const t = e.target.closest('.gbtn'); if(!t) return;
+  guideTabs.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const key = t.dataset.tab;
+  document.querySelectorAll('.guide-body').forEach(b=>{ b.style.display='none'; b.classList.remove('active'); });
+  const body = document.querySelector(`.guide-body[data-body="${key}"]`);
+  if(body){ body.style.display='block'; body.classList.add('active'); }
+  document.getElementById('guideBack').style.display = 'block';
+});
+
+// 4) ЧАТ НЭЭХДЭЭ ТОЛГОЙН НЭРИЙГ ШИНЭЧИЛНЭ
+function openChat(item){
+  currentChat = item;
+  chatName.textContent = item.name;
+  chatSub.textContent  = item.meta || '';
+  chatBody.innerHTML = '';
+  addMsg('bot', `Сайн байна уу! <b>${item.name}</b> нээгдлээ. Юу асуух вэ?`);
+
+  // ТОЛГОЙГ “Оюунсанаа чат — …” хэлбэрээр
+  const tt = document.getElementById('topTitle');
+  tt.textContent = `Оюунсанаа чат — ${item.name}`;
+
+  // бичих үед төвлөрөх
+  app.classList.add('sidebar-hidden');
+  chatInput.focus();
+}
+// 0) Толгой дээрх кодыг байрлуулна (аль хэдийн байгаа бол алгас)
+document.getElementById('userCode').textContent = 'код: ' + (localStorage.getItem('oy_reg_code') || '—');
+
+// 1) ЧАТ БИЧИХ ҮЕД МЕНЮ АВТО ХАЛЬДАНА
+const app = document.getElementById('app');
+chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
+chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
+document.getElementById('chatForm')?.addEventListener('submit', ()=> app.classList.add('sidebar-hidden'));
+
+// 2) ХААХ / НЭЭХ
+const closeBtn = document.getElementById('closeBtn');
+const openPill = document.getElementById('openPill');
+closeBtn.addEventListener('click', ()=>{
+  app.style.display = 'none';
+  openPill.style.display = 'inline-block';
+});
+openPill.addEventListener('click', ()=>{
+  app.style.display = 'grid';
+  openPill.style.display = 'none';
+});
+
+// 3) 4 МЕНЮ – идэвхжүүлэх үед зөвхөн тухайн жагсаалтыг харуулах (аль хэдийн байгаа логик дээр нэмэлт баталгаажуулалт)
+guideTabs.addEventListener('click', e=>{
+  const t = e.target.closest('.gbtn'); if(!t) return;
+  guideTabs.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const key = t.dataset.tab;
+  document.querySelectorAll('.guide-body').forEach(b=>{ b.style.display='none'; b.classList.remove('active'); });
+  const body = document.querySelector(`.guide-body[data-body="${key}"]`);
+  if(body){ body.style.display='block'; body.classList.add('active'); }
+  document.getElementById('guideBack').style.display = 'block';
+});
+
+// 4) ЧАТ НЭЭХДЭЭ ТОЛГОЙН НЭРИЙГ ШИНЭЧИЛНЭ
+function openChat(item){
+  currentChat = item;
+  chatName.textContent = item.name;
+  chatSub.textContent  = item.meta || '';
+  chatBody.innerHTML = '';
+  addMsg('bot', `Сайн байна уу! <b>${item.name}</b> нээгдлээ. Юу асуух вэ?`);
+
+  // ТОЛГОЙГ “Оюунсанаа чат — …” хэлбэрээр
+  const tt = document.getElementById('topTitle');
+  tt.textContent = `Оюунсанаа чат — ${item.name}`;
+
+  // бичих үед төвлөрөх
+  app.classList.add('sidebar-hidden');
+  chatInput.focus();
+}
+// 1) Чат бичихэд меню автоматаар алга болгоно
+(function(){
+  const app = document.getElementById('app');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  if(chatInput){
+    chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
+    chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
   }
-  #oy-fab{position:fixed;right:20px;bottom:20px;z-index:999999;
-    background:var(--oy-premium);color:#fff;border:0;border-radius:999px;
-    padding:12px 16px;font:600 15px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    box-shadow:0 8px 22px rgba(0,0,0,.22);cursor:pointer}
-  #oy-chat{position:fixed;right:20px;bottom:80px;z-index:999998;
-    width:380px;max-width:92vw;height:70vh;background:#fff;border-radius:14px;
-    box-shadow:0 14px 34px rgba(0,0,0,.28);display:none;overflow:hidden}
-  #oy-chat.oy-open{display:block}
-  #oy-head{background:var(--oy-premium);color:#fff;display:flex;align-items:center;justify-content:space-between;
-    padding:10px 12px;font:700 14px/1 system-ui,-apple-system,Segoe UI}
-  #oy-close{background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer}
-  #oy-body{display:flex;flex-direction:column;height:calc(70vh - 44px);background:var(--oy-bg)}
-  #oy-log{flex:1;overflow:auto;padding:12px;background:#faf9f7}
-  .oy-msg{max-width:85%;margin:8px 0;padding:10px 12px;border-radius:12px;font:500 14px/1.35 system-ui,-apple-system}
-  .oy-user{margin-left:auto;background:#e9e4df;color:#222}
-  .oy-bot{margin-right:auto;background:#173125;color:#fff} /* bot bubble (Forest) */
-  #oy-form{display:flex;gap:8px;padding:10px;border-top:1px solid #eee;background:#fff}
-  #oy-input{flex:1;border:1px solid #ddd;border-radius:10px;padding:10px 12px;font:500 14px system-ui}
-  #oy-send{background:var(--oy-premium);color:#fff;border:0;border-radius:10px;padding:10px 14px;font:700 14px;cursor:pointer}
-  #oy-note{padding:8px 12px;color:var(--oy-muted);font:500 12px/1.3 system-ui}
-  @media (max-width:420px){ #oy-chat{height:78vh} }
-</style>
-
-<button id="oy-fab" type="button">Ярилцъя
-</button>
-
-<div id="oy-chat" role="dialog" aria-label="Oyunsanaa Chat">
-  <div id="oy-head">
-    <span>Oyunsanaa — Чат</span>
-    <button id="oy-close" aria-label="Close">✕</button>
-  </div>
-  <div id="oy-body">
-    <div id="oy-log" aria-live="polite"></div>
-    <div id="oy-note">Сайн байна уу! Асуултаа бичээрэй. 😊</div>
-    <form id="oy-form">
-      <input id="oy-input" type="text" placeholder="Энд бич..." autocomplete="off" />
-      <button id="oy-send">Илгээх</button>
-    </form>
-  </div>
-</div>
-
-<script>
-(() => {
-  // -------- CONFIG (та энд API-гаа тохируулна) --------
-  const API_URL = "YOUR_API_URL";      // ж: https://api.yourdomain.com/chat
-  const API_KEY = "YOUR_API_KEY";      // эсвэл хоосон орхиж болно
-  const HEADERS = () => ({
-    "Content-Type":"application/json",
-    ...(API_KEY ? { "Authorization":"Bearer "+API_KEY } : {})
-  });
-  // -----------------------------------------------------
-
-  const $ = s => document.querySelector(s);
-  const fab = $("#oy-fab"), panel = $("#oy-chat"), closeBtn = $("#oy-close");
-  const log = $("#oy-log"), form = $("#oy-form"), input = $("#oy-input"), note = $("#oy-note");
-
-  fab.addEventListener("click", () => panel.classList.toggle("oy-open"));
-  closeBtn.addEventListener("click", () => panel.classList.remove("oy-open"));
-
-  function addMsg(text, who="bot"){
-    const div = document.createElement("div");
-    div.className = "oy-msg " + (who === "user" ? "oy-user" : "oy-bot");
-    div.textContent = text;
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
+  if(sendBtn){
+    sendBtn.addEventListener('click', ()=> app.classList.add('sidebar-hidden'));
   }
-
-  async function sendToAI(message){
-    // Та бэкэндээ дараах форматаар хүлээж авахад амархан:
-    // POST API_URL { message, session_id } -> { reply }
-    const payload = {
-      message,
-      session_id: getSession(),
-    };
-    const res = await fetch(API_URL, {
-      method:"POST",
-      headers: HEADERS(),
-      body: JSON.stringify(payload)
-    });
-    if(!res.ok){
-      const t = await res.text();
-      throw new Error("API алдаа: " + res.status + " " + t);
-    }
-    const data = await res.json();
-    return data.reply || "";
-  }
-
-  function getSession(){
-    // Энгийн session id (localStorage)
-    const k="oy_session_id";
-    let id = localStorage.getItem(k);
-    if(!id){
-      id = "oy-"+Math.random().toString(36).slice(2);
-      localStorage.setItem(k,id);
-    }
-    return id;
-  }
-
-  // Эхний мэндчилгээ (optional)
-  if(!sessionStorage.getItem("oy_greeted")){
-    addMsg("Сайн байна уу! Би танд тусалъя.");
-    sessionStorage.setItem("oy_greeted","1");
-  }
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const msg = (input.value || "").trim();
-    if(!msg) return;
-    addMsg(msg, "user");
-    input.value = "";
-    note.textContent = "Бодож байна…";
-
-    try{
-      const reply = await sendToAI(msg);
-      addMsg(reply || "Одоохондоо хариу алга. Дахин оролдоно уу.", "bot");
-    }catch(err){
-      console.error(err);
-      addMsg("Уучлаарай, сервертэй холбогдож чадсангүй. Дараа дахин оролдоно уу.", "bot");
-    }finally{
-      note.textContent = "";
-    }
-  });
 })();
-</script>
+
+// 2) Чат нээх үед толгойн гарчгийг шинэчилж байсныг баталгаажуулна
+(function(){
+  const topTitle = document.getElementById('topTitle');
+  if(topTitle){
+    const _openChat = window.openChat;
+    window.openChat = function(item){
+      if(_openChat) _openChat(item);
+      topTitle.textContent = `Оюунсанаа чат — ${item.name}`;
+    };
+  }
+})();
