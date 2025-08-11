@@ -1,123 +1,353 @@
-//// 0) Толгой дээрх кодыг байрлуулна (аль хэдийн байгаа бол алгас)
-document.getElementById('userCode').textContent = 'код: ' + (localStorage.getItem('oy_reg_code') || '—');
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Oyunsanaa Chat · Full</title>
+<style>
+  :root{
+    /* Хэмжээ зөвхөн эдгээрийг өөрчилнө */
+    --w: 360px;   /* нийт өргөн */
+    --h: 74vh;    /* нийт өндөр */
+    --sidebar: 210px;
 
-// 1) ЧАТ БИЧИХ ҮЕД МЕНЮ АВТО ХАЛЬДАНА
-const app = document.getElementById('app');
-chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
-chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
-document.getElementById('chatForm')?.addEventListener('submit', ()=> app.classList.add('sidebar-hidden'));
+    /* Өнгө палетт (дээрээсээ дарааллаар) */
+    --c1:#F1F0E2; /* Cannoli Cream  */
+    --c2:#E4C7B7; /* Cream Tan      */
+    --c3:#BBAA91; /* Safari         */
+    --c4:#C39D88; /* Sirocco        */
+    --c5:#A47864; /* Mocha Mousse   */
+    --c6:#A28776; /* Chanterelle    */
+    --c7:#8B645A; /* Baltic Amber   */
+    --c8:#56443F; /* Chocolate Martini */
 
-// 2) ХААХ / НЭЭХ
-const closeBtn = document.getElementById('closeBtn');
-const openPill = document.getElementById('openPill');
-closeBtn.addEventListener('click', ()=>{
-  app.style.display = 'none';
-  openPill.style.display = 'inline-block';
-});
-openPill.addEventListener('click', ()=>{
-  app.style.display = 'grid';
-  openPill.style.display = 'none';
-});
+    --txt:#111827; --muted:#6b7280; --border:#e5e7eb; --panel:#f6f7f9; --accent:#212E40;
+    --premium:#7F4B30; /* угаан хүрэн */
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,Helvetica,sans-serif;background:#fff;color:var(--txt)}
 
-// 3) 4 МЕНЮ – идэвхжүүлэх үед зөвхөн тухайн жагсаалтыг харуулах (аль хэдийн байгаа логик дээр нэмэлт баталгаажуулалт)
-guideTabs.addEventListener('click', e=>{
-  const t = e.target.closest('.gbtn'); if(!t) return;
-  guideTabs.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  const key = t.dataset.tab;
-  document.querySelectorAll('.guide-body').forEach(b=>{ b.style.display='none'; b.classList.remove('active'); });
-  const body = document.querySelector(`.guide-body[data-body="${key}"]`);
-  if(body){ body.style.display='block'; body.classList.add('active'); }
-  document.getElementById('guideBack').style.display = 'block';
-});
+  /* Widget wrapper */
+  .app{position:fixed;right:16px;bottom:16px;width:var(--w);height:var(--h);max-width:96vw;
+       border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.18);
+       display:grid;grid-template-columns:var(--sidebar) 1fr;grid-template-rows:52px 1fr;
+       grid-template-areas:"topbar topbar" "sidebar main";overflow:hidden;z-index:9999;background:#fff}
 
-// 4) ЧАТ НЭЭХДЭЭ ТОЛГОЙН НЭРИЙГ ШИНЭЧИЛНЭ
-function openChat(item){
-  currentChat = item;
-  chatName.textContent = item.name;
-  chatSub.textContent  = item.meta || '';
-  chatBody.innerHTML = '';
-  addMsg('bot', `Сайн байна уу! <b>${item.name}</b> нээгдлээ. Юу асуух вэ?`);
+  .topbar{grid-area:topbar;display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--accent);color:#fff}
+  .brand{display:flex;gap:8px;align-items:center;font-weight:600}
+  .chip{font-size:12px;background:rgba(255,255,255,.16);padding:4px 8px;border-radius:999px}
+  .toggle{display:none}
+  .app.sidebar-hidden{grid-template-columns:0 1fr}
+  .app.sidebar-hidden .sidebar{display:none}
+  .app.sidebar-hidden .toggle{display:inline-flex;position:absolute;left:8px;top:8px;border:0;border-radius:8px;width:32px;height:28px;background:rgba(255,255,255,.15);color:#fff;align-items:center;justify-content:center;cursor:pointer}
 
-  // ТОЛГОЙГ “Оюунсанаа чат — …” хэлбэрээр
-  const tt = document.getElementById('topTitle');
-  tt.textContent = `Оюунсанаа чат — ${item.name}`;
+  .sidebar{grid-area:sidebar;border-right:1px solid var(--border);display:flex;flex-direction:column;min-width:var(--sidebar);max-width:var(--sidebar);overflow:auto;background:#fafafa}
 
-  // бичих үед төвлөрөх
-  app.classList.add('sidebar-hidden');
-  chatInput.focus();
-}
-// 0) Толгой дээрх кодыг байрлуулна (аль хэдийн байгаа бол алгас)
-document.getElementById('userCode').textContent = 'код: ' + (localStorage.getItem('oy_reg_code') || '—');
+  .menu-title{font-weight:600;font-size:11px;color:var(--muted);padding:8px 10px 4px}
+  .menu-grid{display:grid;grid-template-columns:1fr;gap:8px;padding:6px 10px 12px;border-bottom:1px solid var(--border)}
+  .btn{border:1px solid var(--border);background:#fff;border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px}
+  .btn .t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .btn:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
 
-// 1) ЧАТ БИЧИХ ҮЕД МЕНЮ АВТО ХАЛЬДАНА
-const app = document.getElementById('app');
-chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
-chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
-document.getElementById('chatForm')?.addEventListener('submit', ()=> app.classList.add('sidebar-hidden'));
+  /* 8 меню – палеттээр ялгана */
+  .m1{background:var(--c1)}
+  .m2{background:var(--c2)}
+  .m3{background:var(--c3)}
+  .m4{background:var(--c4)}
+  .m5{background:var(--c5);color:#fff}
+  .m6{background:var(--c6)}
+  .m7{background:var(--c7);color:#fff}
+  .m8{background:var(--c8);color:#fff}
 
-// 2) ХААХ / НЭЭХ
-const closeBtn = document.getElementById('closeBtn');
-const openPill = document.getElementById('openPill');
-closeBtn.addEventListener('click', ()=>{
-  app.style.display = 'none';
-  openPill.style.display = 'inline-block';
-});
-openPill.addEventListener('click', ()=>{
-  app.style.display = 'grid';
-  openPill.style.display = 'none';
-});
+  /* Guide (хамгийн доор) */
+  #guideSection{border-top:1px dashed var(--border);margin-top:auto;padding:8px 10px 12px;background:#fff}
+  .guide-tabs{position:sticky;bottom:0;display:flex;flex-direction:column;gap:6px}
+  .gbtn{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 10px;cursor:pointer;text-align:left}
+  .gbtn.active{background:var(--premium);color:#fff;border-color:var(--premium)}
+  .guide-body{display:none;margin-top:8px}
+  .guide-body.active{display:block}
+  .chips{display:flex;flex-direction:column;gap:6px}
+  .chipbtn{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;cursor:pointer}
+  .chipbtn .meta{font-size:12px;color:var(--muted)}
+  .back{display:none;margin-top:8px;border:1px solid var(--border);background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer}
+  .active-mode .back{display:block}
 
-// 3) 4 МЕНЮ – идэвхжүүлэх үед зөвхөн тухайн жагсаалтыг харуулах (аль хэдийн байгаа логик дээр нэмэлт баталгаажуулалт)
-guideTabs.addEventListener('click', e=>{
-  const t = e.target.closest('.gbtn'); if(!t) return;
-  guideTabs.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  const key = t.dataset.tab;
-  document.querySelectorAll('.guide-body').forEach(b=>{ b.style.display='none'; b.classList.remove('active'); });
-  const body = document.querySelector(`.guide-body[data-body="${key}"]`);
-  if(body){ body.style.display='block'; body.classList.add('active'); }
-  document.getElementById('guideBack').style.display = 'block';
-});
+  /* Pinned */
+  .pinned{padding:8px 10px;border-top:1px solid var(--border);background:#fff}
+  .pinned .row{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:10px;padding:6px 8px;margin-top:6px;background:#fff}
 
-// 4) ЧАТ НЭЭХДЭЭ ТОЛГОЙН НЭРИЙГ ШИНЭЧИЛНЭ
-function openChat(item){
-  currentChat = item;
-  chatName.textContent = item.name;
-  chatSub.textContent  = item.meta || '';
-  chatBody.innerHTML = '';
-  addMsg('bot', `Сайн байна уу! <b>${item.name}</b> нээгдлээ. Юу асуух вэ?`);
+  /* Main chat */
+  .main{grid-area:main;display:flex;flex-direction:column}
+  .chat-header{height:52px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 10px;background:#fff}
+  .name{font-weight:600}
+  .chat-body{flex:1;overflow:auto;background:var(--panel);padding:12px}
+  .msg{max-width:72%;background:#fff;border:1px solid var(--border);padding:10px;border-radius:14px;margin:10px 0}
+  .me{margin-left:auto;background:#E6F4FF;border-color:#CBE6FF}
+  .bot{margin-right:auto}
+  .img-preview{max-width:120px;border-radius:8px;margin-top:6px;border:1px solid var(--border)}
+  .chat-input{border-top:1px solid var(--border);background:#fff;padding:10px;display:flex;gap:8px;align-items:center}
+  .field{flex:1;display:flex;align-items:center;border:1px solid var(--border);border-radius:14px;padding:6px 8px;background:#fff}
+  .field input{flex:1;border:none;outline:none;font-size:14px;padding:8px}
+  .icon-btn{border:1px solid var(--border);background:#fff;border-radius:12px;padding:8px 10px;cursor:pointer}
+  .icon-btn:hover{box-shadow:0 2px 8px rgba(0,0,0,0.06)}
 
-  // ТОЛГОЙГ “Оюунсанаа чат — …” хэлбэрээр
-  const tt = document.getElementById('topTitle');
-  tt.textContent = `Оюунсанаа чат — ${item.name}`;
+  @media (max-width:540px){
+    :root{--w:calc(100vw - 14px);--h:82vh}
+    .topbar{height:48px}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- TOP -->
+  <div class="topbar">
+    <button class="toggle" id="toggleMenu">≡</button>
+    <div class="brand">Oyunsanaa <span class="chip" id="userCode">код: –</span></div>
+    <div class="chip" id="userName">Нэр: –</div>
+  </div>
 
-  // бичих үед төвлөрөх
-  app.classList.add('sidebar-hidden');
-  chatInput.focus();
-}
-// 1) Чат бичихэд меню автоматаар алга болгоно
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="menu-title">Үндсэн цэс</div>
+    <div class="menu-grid" id="mainMenus">
+      <button class="btn m1" data-main="program"><span class="t">Хөтөлбөр</span></button>
+      <button class="btn m2" data-main="service"><span class="t">Үйлчилгээ</span></button>
+      <button class="btn m3" data-main="test"><span class="t">Тест</span></button>
+      <button class="btn m4" data-main="edu"><span class="t">Сэтгэлийн боловсрол</span></button>
+      <button class="btn m5" data-main="journal"><span class="t">Өдрийн тэмдэглэл</span></button>
+      <button class="btn m6" data-main="profile"><span class="t">Миний бүртгэл</span></button>
+      <button class="btn m7" data-main="secret"><span class="t">Нууц цонх</span></button>
+      <!-- Сэтгэлийн хөтөч (хамгийн доор) -->
+      <button class="btn m8" data-main="guide"><span class="t">🧠 Сэтгэлийн хөтөч</span></button>
+    </div>
+
+    <!-- Guide (доор) -->
+    <section id="guideSection" hidden>
+      <div class="menu-title">🧠 Сэтгэлийн хөтөч</div>
+
+      <!-- 4 меню (доошоо, sticky, хөдлөхгүй) -->
+      <div class="guide-tabs" id="guideTabs">
+        <button class="gbtn" data-tab="basic">Энгийн</button>
+        <button class="gbtn" data-tab="bundle">Багц</button>
+        <button class="gbtn" data-tab="special">Тусгай</button>
+        <button class="gbtn" data-tab="premium">⭐ Премиум</button>
+      </div>
+
+      <!-- Буцах (4-өөс нэгийг дарсан үед л харагдана) -->
+      <button class="back" id="guideBack">← Буцах</button>
+
+      <!-- Ангилал бүрийн чатууд -->
+      <div class="guide-body" data-body="basic"></div>
+      <div class="guide-body" data-body="bundle"></div>
+      <div class="guide-body" data-body="special"></div>
+      <div class="guide-body" data-body="premium"></div>
+    </section>
+
+    <!-- Худалдан авсан -->
+    <section class="pinned" id="pinnedSection" hidden>
+      <div class="menu-title">🛒 Худалдан авсан</div>
+      <div id="pinnedList"></div>
+    </section>
+  </aside>
+
+  <!-- MAIN CHAT -->
+  <main class="main">
+    <header class="chat-header">
+      <div>
+        <div class="name" id="chatName">Чат сонгоно уу</div>
+        <div class="sub" id="chatSub" style="color:var(--muted);font-size:12px">Сонгосон чатны нэр энд гарна</div>
+      </div>
+      <button class="icon-btn" id="pinCurrent" title="Энэ чатыг хадгалах">📌</button>
+    </header>
+    <section class="chat-body" id="chatBody"></section>
+    <footer class="chat-input">
+      <button class="icon-btn" id="addImage" title="Зураг">＋</button>
+      <input type="file" id="filePicker" accept="image/*" hidden />
+      <div class="field">
+        <input id="chatInput" type="text" placeholder="Энд бичээд Enter дарна уу…" />
+        <button class="icon-btn" id="sendBtn" title="Илгээх">➤</button>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<script>
 (function(){
+  // ——— User name/code (автоматаар) ———
+  const userName = localStorage.getItem('oy_name') || 'Зочин';
+  const regCode  = localStorage.getItem('oy_reg_code') || '—';
+  document.getElementById('userName').textContent = 'Нэр: ' + userName;
+  document.getElementById('userCode').textContent = 'код: ' + regCode;
+
+  // ——— Demo data for 4 categories ———
+  const DATA = {
+    basic:  Array.from({length:8}, (_,i)=>({id:`b${i+1}`, name:`Энгийн чат ${i+1}`,  meta:`B-${i+1}`})),
+    bundle: Array.from({length:5}, (_,i)=>({id:`g${i+1}`, name:`Багц чат ${i+1}`,    meta:`G-${i+1}`})),
+    special:Array.from({length:2}, (_,i)=>({id:`s${i+1}`, name:`Тусгай чат ${i+1}`,   meta:`S-${i+1}`})),
+    premium:Array.from({length:8}, (_,i)=>({id:`p${i+1}`, name:`⭐ Премиум чат ${i+1}`,meta:`P-${i+1}`})),
+  };
+
+  // ——— Elements ———
   const app = document.getElementById('app');
-  const chatInput = document.getElementById('chatInput');
-  const sendBtn = document.getElementById('sendBtn');
-  if(chatInput){
-    chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
-    chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
-  }
-  if(sendBtn){
-    sendBtn.addEventListener('click', ()=> app.classList.add('sidebar-hidden'));
-  }
-})();
+  const sidebar = document.getElementById('sidebar');
+  const toggleMenu = document.getElementById('toggleMenu');
 
-// 2) Чат нээх үед толгойн гарчгийг шинэчилж байсныг баталгаажуулна
-(function(){
-  const topTitle = document.getElementById('topTitle');
-  if(topTitle){
-    const _openChat = window.openChat;
-    window.openChat = function(item){
-      if(_openChat) _openChat(item);
-      topTitle.textContent = `Оюунсанаа чат — ${item.name}`;
-    };
+  const mainMenus = document.getElementById('mainMenus');
+  const guideSection = document.getElementById('guideSection');
+  const guideTabs = document.getElementById('guideTabs');
+  const guideBack = document.getElementById('guideBack');
+  const bodies = document.querySelectorAll('.guide-body');
+
+  const chatName = document.getElementById('chatName');
+  const chatSub  = document.getElementById('chatSub');
+  const chatBody = document.getElementById('chatBody');
+  const chatInput= document.getElementById('chatInput');
+  const sendBtn  = document.getElementById('sendBtn');
+
+  const addImageBtn = document.getElementById('addImage');
+  const filePicker  = document.getElementById('filePicker');
+  const pinCurrentBtn = document.getElementById('pinCurrent');
+  const pinnedSection = document.getElementById('pinnedSection');
+  const pinnedList = document.getElementById('pinnedList');
+
+  let currentChat = null;
+  let purchased = JSON.parse(localStorage.getItem('oy_purchased') || '[]');
+
+  // ——— 8 menus click ———
+  mainMenus.addEventListener('click', (e)=>{
+    const b = e.target.closest('.btn'); if(!b) return;
+    const k = b.dataset.main;
+    if(k==='guide'){
+      // зөвхөн хөтөч гарч ирнэ, бусад хэсгийг хуу
+      guideSection.hidden = false;
+      sidebar.classList.add('active-mode');
+      mainMenus.style.display = 'none';
+      guideBack.style.display = 'none'; // эхэндээ нуусан
+      bodies.forEach(x=>{x.innerHTML=''; x.style.display='none'; x.classList.remove('active');});
+      // зөвхөн 4 товч харагдана
+      guideTabs.querySelectorAll('.gbtn').forEach(btn=>btn.classList.remove('active'));
+      guideSection.scrollIntoView({behavior:'smooth',block:'nearest'});
+    } else {
+      // бусад 7 цэс — одоогоор демо
+      openChat({name: b.textContent.trim(), meta: '—'});
+    }
+  });
+
+  // ——— Render chips for a tab ———
+  function renderTab(tab){
+    const body = document.querySelector(`.guide-body[data-body="${tab}"]`);
+    body.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'chips';
+    (DATA[tab] || []).forEach(item=>{
+      const row = document.createElement('div');
+      row.className = 'chipbtn';
+      row.innerHTML = `<div>${item.name}</div><div class="meta">${item.meta}</div>`;
+      row.addEventListener('click', ()=> openChat(item));
+      wrap.appendChild(row);
+    });
+    body.appendChild(wrap);
   }
+
+  // ——— 4 tab vertical: show only selected list ———
+  guideTabs.addEventListener('click', (e)=>{
+    const t = e.target.closest('.gbtn'); if(!t) return;
+    guideTabs.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+
+    // зөвхөн нэг body-г идэвхжүүлнэ
+    const key = t.dataset.tab;
+    bodies.forEach(b=>{b.style.display='none'; b.classList.remove('active');});
+    const body = document.querySelector(`.guide-body[data-body="${key}"]`);
+    renderTab(key);
+    body.style.display = 'block';
+    body.classList.add('active');
+
+    // “Буцах” гарч ирнэ
+    guideBack.style.display = 'block';
+  });
+
+  // ——— Буцах: 4 товч руу ———
+  guideBack.addEventListener('click', ()=>{
+    bodies.forEach(b=>{b.style.display='none'; b.classList.remove('active'); b.innerHTML='';});
+    guideTabs.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('active'));
+    guideBack.style.display='none';
+  });
+
+  // ——— Chat basic ———
+  function openChat(item){
+    currentChat = item;
+    chatName.textContent = item.name;
+    chatSub.textContent  = item.meta || '';
+    chatBody.innerHTML = '';
+    addMsg('bot', `Сайн байна уу! <b>${item.name}</b> нээгдлээ. Юу асуух вэ?`);
+    // чат руу орсон үед sidebar нууж, бичихэд төвлөрнө
+    app.classList.add('sidebar-hidden');
+  }
+
+  function addMsg(role, html){
+    const el = document.createElement('div');
+    el.className = 'msg ' + (role==='me'?'me':'bot');
+    el.innerHTML = html;
+    chatBody.appendChild(el);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  function send(){
+    const t = chatInput.value.trim(); if(!t) return;
+    addMsg('me', escapeHtml(t));
+    chatInput.value='';
+    setTimeout(()=> addMsg('bot','(Демо) Мессеж хүлээн авлаа.'), 350);
+  }
+  sendBtn.addEventListener('click', send);
+  chatInput.addEventListener('keydown', e=>{
+    if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); }
+  });
+
+  // image
+  addImageBtn.addEventListener('click', ()=>filePicker.click());
+  filePicker.addEventListener('change', ()=>{
+    const f = filePicker.files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = ()=> addMsg('me', `Зураг:<br><img class="img-preview" src="${rd.result}">`);
+    rd.readAsDataURL(f);
+    filePicker.value='';
+  });
+
+  // toggle sidebar
+  document.getElementById('toggleMenu').addEventListener('click', ()=> app.classList.remove('sidebar-hidden'));
+
+  // pin purchased
+  pinCurrentBtn.addEventListener('click', ()=>{
+    if(!currentChat) return;
+    const exists = purchased.find(x=>x.id===currentChat.id);
+    if(exists) purchased = purchased.filter(x=>x.id!==currentChat.id);
+    else purchased.push(currentChat);
+    localStorage.setItem('oy_purchased', JSON.stringify(purchased));
+    refreshPinned();
+  });
+  function refreshPinned(){
+    pinnedList.innerHTML = '';
+    if(purchased.length===0){ pinnedSection.hidden = true; return; }
+    pinnedSection.hidden = false;
+    purchased.forEach(it=>{
+      const r = document.createElement('div');
+      r.className='row';
+      r.innerHTML = `<span>${it.name}</span><div><button class="icon-btn">▶</button> <button class="icon-btn">✕</button></div>`;
+      r.querySelectorAll('button')[0].onclick = ()=> openChat(it);
+      r.querySelectorAll('button')[1].onclick = ()=>{
+        purchased = purchased.filter(x=>x.id!==it.id);
+        localStorage.setItem('oy_purchased', JSON.stringify(purchased));
+        refreshPinned();
+      };
+      pinnedList.appendChild(r);
+    });
+  }
+  refreshPinned();
+
+  function escapeHtml(s){return s.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 })();
+</script>
+</body>
+</html>
