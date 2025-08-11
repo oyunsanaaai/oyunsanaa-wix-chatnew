@@ -1,0 +1,139 @@
+/* ——— ТОЛГОЙ, СУМНЫ ӨНГӨ ——— */
+:root{
+  --accent:#800000;   /* толгой мөр + X + ≡ */
+  --send:#800000;     /* илгээх сумны өнгө */
+}
+
+/* Sidebar бичвэрийг цэнхэр биш ЦАГААН болгоно */
+.btn .t{ color:#fff !important; }
+
+/* 4 МЕНЮ (Энгийн/Багц/Тусгай/Премиум) – палетт */
+:root{
+  --tab-basic:  #A3A380; /* OLIVE PETAL  */
+  --tab-bundle: #D7CE93; /* GOLDEN CLOVER */
+  --tab-special:#EFEBCE; /* ARTIC DAISY   */
+  --tab-prem:   #D8A48F; /* ROSE BLUSH    */
+}
+
+/* доошоо цувах 4 товч */
+.guide-tabs{ position:sticky; bottom:0; display:flex; flex-direction:column; gap:6px }
+.gbtn{ border:1px solid var(--border); border-radius:999px; padding:8px 10px; text-align:left; cursor:pointer }
+.gbtn[data-tab="basic"]  { background:var(--tab-basic);  color:#111; }
+.gbtn[data-tab="bundle"] { background:var(--tab-bundle); color:#111; }
+.gbtn[data-tab="special"]{ background:var(--tab-special); color:#111; }
+.gbtn[data-tab="premium"]{ background:var(--tab-prem);   color:#111; }
+.gbtn.active{ outline:2px solid rgba(0,0,0,.15) }
+
+/* Толгой мөр + товчнууд */
+.topbar{ background:var(--accent) !important; }
+#sendBtn{ background:var(--send) !important; color:#fff !important; }
+
+/* Харагдахгүй болтол хаах X дарсны дараа гарч ирэх жижиг пилл (хэрэв өмнө байгаа бол үлдээнэ) */
+.mini-pill{ position:fixed; right:16px; bottom:16px; display:none;
+  background:var(--accent); color:#fff; border:0; border-radius:999px; padding:8px 12px; box-shadow:0 6px 16px rgba(0,0,0,.2); cursor:pointer }
+/* === Blue → custom colors PATCH === */
+
+/* 1) Толгой ба илгээх сум — марун */
+:root{
+  --accent:#800000;   /* топбар */
+  --send:#800000;     /* илгээх сум */
+}
+.topbar{ background:var(--accent) !important; }
+#sendBtn{ background:var(--send) !important; color:#fff !important; }
+
+/* 2) Миний мессежийн (цэнхэр) бөмбөлгийг зайлуулж шар-цагаан палеттаар */
+.me{
+  background:#EFEBCE !important;      /* Artic Daisy */
+  border-color:#E3DFC8 !important;
+  color:#2B2B2B !important;
+}
+
+/* 3) Sidebar товчдын текст — цагаан биш хэсгийг бараан саарал,
+      харин бараан дэвсгэртэй (m5,m7,m8) дээр цагаан хэвээр */
+.btn .t{ color:#2B2B2B !important; }
+.btn.m5 .t, .btn.m7 .t, .btn.m8 .t{ color:#fff !important; }
+
+/* 4) 4 меню (Энгийн/Багц/Тусгай/Премиум) – шинэ палетт */
+:root{
+  --tab-basic:  #A3A380; /* Olive Petal  */
+  --tab-bundle: #D7CE93; /* Golden Clover */
+  --tab-special:#EFEBCE; /* Artic Daisy   */
+  --tab-prem:   #D8A48F; /* Rose Blush    */
+}
+.gbtn[data-tab="basic"]  { background:var(--tab-basic);  color:#111 !important; }
+.gbtn[data-tab="bundle"] { background:var(--tab-bundle); color:#111 !important; }
+.gbtn[data-tab="special"]{ background:var(--tab-special);color:#111 !important; }
+.gbtn[data-tab="premium"]{ background:var(--tab-prem);   color:#111 !important; }
+
+/* 5) Input фокус — цэнхэр биш, марун акцент */
+#chatInput:focus{
+  outline:none;
+  border-color:#800000 !important;
+  box-shadow:0 0 0 2px #80000022;
+}
+
+/* 6) Линкүүд цэнхэр бүү байг */
+a{ color:#2B2B2B !important; }
+/* ЭНЭГИЙГ <style> доторх :root хэсэгтээ ОРШИН БАЙГАА утгууд дээрээ
+   эсвэл style-ийн ТӨГСГӨЛД нэмж бичээд өөрийн хүссэн тоог тавина. */
+:root{
+  --w: 380px;     /* нийт өргөн  (жишээ: 360 → 380/400px бол чат тал илүү өргөн) */
+  --h: 78vh;      /* нийт өндөр  (жишээ: 74vh → 78–82vh) */
+  --sidebar: 180px; /* sidebar өргөн (210–220px байсныг 160–190px болговол чат тал тэлнэ) */
+}
+/* Grid багана – sidebar + chat */
+.app{ grid-template-columns: var(--sidebar) 1fr !important; }
+/* ЭНЭГИЙГ STYLE-ИЙН СҮҮЛД НЭМ */
+.topbar{ background:#800000 !important; }
+#sendBtn{ background:#800000 !important; color:#fff !important; }
+const app = document.getElementById('app');
+const chatInput = document.getElementById('chatInput');
+const chatForm = document.getElementById('chatForm') || document.querySelector('.chat-input');
+
+chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
+chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
+chatForm && chatForm.addEventListener('submit', ()=> app.classList.add('sidebar-hidden'));
+:root{
+  --tab-basic:  #A3A380; /* Olive Petal  */
+  --tab-bundle: #D7CE93; /* Golden Clover */
+  --tab-special:#EFEBCE; /* Artic Daisy   */
+  --tab-prem:   #D8A48F; /* Rose Blush    */
+}
+.gbtn[data-tab="basic"]  { background:var(--tab-basic)  !important; color:#111 !important; }
+.gbtn[data-tab="bundle"] { background:var(--tab-bundle) !important; color:#111 !important; }
+.gbtn[data-tab="special"]{ background:var(--tab-special)!important; color:#111 !important; }
+.gbtn[data-tab="premium"]{ background:var(--tab-prem)   !important; color:#111 !important; }
+/* 1) Чат тал өргөн, сайдбар нарийн */
+.app{ grid-template-columns: 200px 1fr !important; } /* 300px→200px */
+.sidebar{ min-width:180px !important; max-width:180px !important; }
+
+/* 2) Чат бичихэд sidebar нуух горим */
+.app.sidebar-hidden{ grid-template-columns:0 1fr !important; }
+.app.sidebar-hidden .sidebar{ display:none !important; }
+
+/* 3) Илгээх сум ба толгой (хаалттай үлдсэн тохиолдолд баталгаажуулалт) */
+.topbar{ background:#800000 !important; }
+#sendBtn{ background:#800000 !important; color:#fff !important; }
+
+/* 4) Миний (me) мессеж – цэнхэрийг авч дулаан шар болгож байна */
+.me{ background:#EFEBCE !important; border-color:#E3DFC8 !important; color:#2B2B2B !important; }
+
+/* 5) 4 меню – таны ОДООГИЙН бүтэц: #guideTabs > button  */
+:root{
+  --tab-basic:  #A3A380; /* Энгийн */
+  --tab-bundle: #D7CE93; /* Багц */
+  --tab-special:#EFEBCE; /* Тусгай */
+  --tab-prem:   #D8A48F; /* Премиум */
+}
+/* доош цуваа, sticky – нааш цааш хөдлөхгүй */
+#guideTabs{ display:flex !important; flex-direction:column !important; gap:6px !important; position:sticky; bottom:0; }
+#guideTabs button{ border-radius:999px !important; border:1px solid var(--border) !important; padding:8px 10px !important; text-align:left !important; }
+#guideTabs button[data-tab="standard"]{ background:var(--tab-basic) !important;  color:#111 !important; }
+#guideTabs button[data-tab="bundle"]  { background:var(--tab-bundle) !important; color:#111 !important; }
+#guideTabs button[data-tab="special"] { background:var(--tab-special) !important; color:#111 !important; }
+#guideTabs button[data-tab="premium"] { background:var(--tab-prem) !important;   color:#111 !important; }
+#guideTabs button.active{ outline:2px solid rgba(0,0,0,.15) !important; }
+
+/* 6) Sidebar товч дээр “цэнхэр” текст харагдаж байвал цагаан/хар болгож өгнө */
+.btn{ color:#111 !important; }
+.btn .sub{ color:#111 !important; }
