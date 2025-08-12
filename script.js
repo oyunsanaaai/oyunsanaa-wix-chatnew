@@ -1,123 +1,66 @@
-//// 0) Толгой дээрх кодыг байрлуулна (аль хэдийн байгаа бол алгас)
-document.getElementById('userCode').textContent = 'код: ' + (localStorage.getItem('oy_reg_code') || '—');
+/ өмнө нь:
+// row.innerHTML = <span>${it.name}</span><div><button class="icon-btn" title="..."></button></div>;
 
-// 1) ЧАТ БИЧИХ ҮЕД МЕНЮ АВТО ХАЛЬДАНА
-const app = document.getElementById('app');
-chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
-chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
-document.getElementById('chatForm')?.addEventListener('submit', ()=> app.classList.add('sidebar-hidden'));
-
-// 2) ХААХ / НЭЭХ
-const closeBtn = document.getElementById('closeBtn');
-const openPill = document.getElementById('openPill');
-closeBtn.addEventListener('click', ()=>{
-  app.style.display = 'none';
-  openPill.style.display = 'inline-block';
-});
-openPill.addEventListener('click', ()=>{
-  app.style.display = 'grid';
-  openPill.style.display = 'none';
-});
-
-// 3) 4 МЕНЮ – идэвхжүүлэх үед зөвхөн тухайн жагсаалтыг харуулах (аль хэдийн байгаа логик дээр нэмэлт баталгаажуулалт)
-guideTabs.addEventListener('click', e=>{
-  const t = e.target.closest('.gbtn'); if(!t) return;
-  guideTabs.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  const key = t.dataset.tab;
-  document.querySelectorAll('.guide-body').forEach(b=>{ b.style.display='none'; b.classList.remove('active'); });
-  const body = document.querySelector(`.guide-body[data-body="${key}"]`);
-  if(body){ body.style.display='block'; body.classList.add('active'); }
-  document.getElementById('guideBack').style.display = 'block';
-});
-
-// 4) ЧАТ НЭЭХДЭЭ ТОЛГОЙН НЭРИЙГ ШИНЭЧИЛНЭ
-function openChat(item){
-  currentChat = item;
-  chatName.textContent = item.name;
-  chatSub.textContent  = item.meta || '';
-  chatBody.innerHTML = '';
-  addMsg('bot', `Сайн байна уу! <b>${item.name}</b> нээгдлээ. Юу асуух вэ?`);
-
-  // ТОЛГОЙГ “Оюунсанаа чат — …” хэлбэрээр
-  const tt = document.getElementById('topTitle');
-  tt.textContent = `Оюунсанаа чат — ${item.name}`;
-
-  // бичих үед төвлөрөх
-  app.classList.add('sidebar-hidden');
-  chatInput.focus();
-}
-// 0) Толгой дээрх кодыг байрлуулна (аль хэдийн байгаа бол алгас)
-document.getElementById('userCode').textContent = 'код: ' + (localStorage.getItem('oy_reg_code') || '—');
-
-// 1) ЧАТ БИЧИХ ҮЕД МЕНЮ АВТО ХАЛЬДАНА
-const app = document.getElementById('app');
-chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
-chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
-document.getElementById('chatForm')?.addEventListener('submit', ()=> app.classList.add('sidebar-hidden'));
-
-// 2) ХААХ / НЭЭХ
-const closeBtn = document.getElementById('closeBtn');
-const openPill = document.getElementById('openPill');
-closeBtn.addEventListener('click', ()=>{
-  app.style.display = 'none';
-  openPill.style.display = 'inline-block';
-});
-openPill.addEventListener('click', ()=>{
-  app.style.display = 'grid';
-  openPill.style.display = 'none';
-});
-
-// 3) 4 МЕНЮ – идэвхжүүлэх үед зөвхөн тухайн жагсаалтыг харуулах (аль хэдийн байгаа логик дээр нэмэлт баталгаажуулалт)
-guideTabs.addEventListener('click', e=>{
-  const t = e.target.closest('.gbtn'); if(!t) return;
-  guideTabs.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  const key = t.dataset.tab;
-  document.querySelectorAll('.guide-body').forEach(b=>{ b.style.display='none'; b.classList.remove('active'); });
-  const body = document.querySelector(`.guide-body[data-body="${key}"]`);
-  if(body){ body.style.display='block'; body.classList.add('active'); }
-  document.getElementById('guideBack').style.display = 'block';
-});
-
-// 4) ЧАТ НЭЭХДЭЭ ТОЛГОЙН НЭРИЙГ ШИНЭЧИЛНЭ
-function openChat(item){
-  currentChat = item;
-  chatName.textContent = item.name;
-  chatSub.textContent  = item.meta || '';
-  chatBody.innerHTML = '';
-  addMsg('bot', `Сайн байна уу! <b>${item.name}</b> нээгдлээ. Юу асуух вэ?`);
-
-  // ТОЛГОЙГ “Оюунсанаа чат — …” хэлбэрээр
-  const tt = document.getElementById('topTitle');
-  tt.textContent = `Оюунсанаа чат — ${item.name}`;
-
-  // бичих үед төвлөрөх
-  app.classList.add('sidebar-hidden');
-  chatInput.focus();
-}
-// 1) Чат бичихэд меню автоматаар алга болгоно
+// ингэж солино:
+row.innerHTML = <span class="lbl">${it.name}</span><div><button class="icon-btn" style="display:none"></button></div>;
+Enkh-Oyun
+<script>
 (function(){
-  const app = document.getElementById('app');
-  const chatInput = document.getElementById('chatInput');
-  const sendBtn = document.getElementById('sendBtn');
-  if(chatInput){
-    chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
-    chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
+  // 🎨 Палетт өнгүүд
+  const COLORS = {
+    standard: ["#E1D9C9","#AE9372","#B27D57","#7F4B30","#A28776","#7D8769","#424C21","#173125"],
+    bundle:   ["#D8A48F","#957C60","#EFEBCE","#ABAC97","#433A29"],
+    special:  ["#353326","#897E45"],
+    premium:  "#7F4D30"
+  };
+
+  // 📌 Жагсаалт буддаг функц
+  function paintList(key, arr){
+    const body = document.querySelector(.guide-body[data-body="${key}"]);
+    if(!body) return;
+    body.querySelectorAll('.chip').forEach((chip,i)=>{
+      const color = Array.isArray(arr) ? (arr[i] || arr[arr.length-1]) : arr;
+
+      // Өнгийг CSS-ээс үл хамааран хүчээр тавина
+      chip.style.setProperty('background', color, 'important');
+      chip.style.setProperty('border-color', color, 'important');
+
+      // Контрастоор текстийн өнгө сонгох
+      const c = color.replace('#','');
+      const r = parseInt(c.substr(0,2),16),
+            g = parseInt(c.substr(2,2),16),
+            b = parseInt(c.substr(4,2),16);
+      const L = (0.2126*r + 0.7152*g + 0.0722*b) / 255;
+      const text = L < 0.55 ? '#fff' : '#1b1b1b';
+
+      chip.querySelectorAll('div, .meta').forEach(el=>{
+        el.style.setProperty('color', text, 'important');
+        el.style.opacity = 1;
+      });
+    });
   }
-  if(sendBtn){
-    sendBtn.addEventListener('click', ()=> app.classList.add('sidebar-hidden'));
+
+  // 🌈 Бүх бүлгүүдийг будаж өгөх
+  function applyGuideColors(){
+    paintList('standard', COLORS.standard);
+    paintList('bundle',   COLORS.bundle);
+    paintList('special',  COLORS.special);
+    paintList('premium',  Array(50).fill(COLORS.premium)); // Premium бүгд ижил
+  }
+  window.applyGuideColors = applyGuideColors;
+
+  // 🚀 Автоматаар өнгө буулгах эвентүүд
+  document.addEventListener('DOMContentLoaded', ()=> setTimeout(applyGuideColors, 0));
+  document.getElementById('guideTabs')?.addEventListener('click', ()=>{
+    setTimeout(applyGuideColors, 0);
+  });
+  const guideSec = document.getElementById('guideSection');
+  if (guideSec){
+    new MutationObserver(()=> applyGuideColors())
+      .observe(guideSec, {childList:true, subtree:true});
   }
 })();
+</script>
 
-// 2) Чат нээх үед толгойн гарчгийг шинэчилж байсныг баталгаажуулна
-(function(){
-  const topTitle = document.getElementById('topTitle');
-  if(topTitle){
-    const _openChat = window.openChat;
-    window.openChat = function(item){
-      if(_openChat) _openChat(item);
-      topTitle.textContent = `Оюунсанаа чат — ${item.name}`;
-    };
-  }
-})();
+
+
