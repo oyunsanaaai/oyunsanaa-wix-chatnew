@@ -1,139 +1,154 @@
-/* ——— ТОЛГОЙ, СУМНЫ ӨНГӨ ——— */
-:root{
-  --accent:#800000;   /* толгой мөр + X + ≡ */
-  --send:#800000;     /* илгээх сумны өнгө */
+<style>
+/* === FINAL CLEAN OVERRIDES (байрлал, таб, чип, сум) === */
+
+/* Цонхыг дээрээс буулгах */
+:root{ --y:160px; } /* 200/240 болгож болно */
+#app.app{
+  top:var(--y) !important;
+  bottom:auto !important;
+  right:16px !important;
 }
 
-/* Sidebar бичвэрийг цэнхэр биш ЦАГААН болгоно */
-.btn .t{ color:#fff !important; }
-
-/* 4 МЕНЮ (Энгийн/Багц/Тусгай/Премиум) – палетт */
-:root{
-  --tab-basic:  #A3A380; /* OLIVE PETAL  */
-  --tab-bundle: #D7CE93; /* GOLDEN CLOVER */
-  --tab-special:#EFEBCE; /* ARTIC DAISY   */
-  --tab-prem:   #D8A48F; /* ROSE BLUSH    */
+/* Меню зүүн | Чат баруун (swap) */
+.app{
+  grid-template-columns: var(--sidebar) 1fr !important;
+  grid-template-areas:
+    "topbar  topbar"
+    "sidebar main" !important;
 }
-
-/* доошоо цувах 4 товч */
-.guide-tabs{ position:sticky; bottom:0; display:flex; flex-direction:column; gap:6px }
-.gbtn{ border:1px solid var(--border); border-radius:999px; padding:8px 10px; text-align:left; cursor:pointer }
-.gbtn[data-tab="basic"]  { background:var(--tab-basic);  color:#111; }
-.gbtn[data-tab="bundle"] { background:var(--tab-bundle); color:#111; }
-.gbtn[data-tab="special"]{ background:var(--tab-special); color:#111; }
-.gbtn[data-tab="premium"]{ background:var(--tab-prem);   color:#111; }
-.gbtn.active{ outline:2px solid rgba(0,0,0,.15) }
-
-/* Толгой мөр + товчнууд */
-.topbar{ background:var(--accent) !important; }
-#sendBtn{ background:var(--send) !important; color:#fff !important; }
-
-/* Харагдахгүй болтол хаах X дарсны дараа гарч ирэх жижиг пилл (хэрэв өмнө байгаа бол үлдээнэ) */
-.mini-pill{ position:fixed; right:16px; bottom:16px; display:none;
-  background:var(--accent); color:#fff; border:0; border-radius:999px; padding:8px 12px; box-shadow:0 6px 16px rgba(0,0,0,.2); cursor:pointer }
-/* === Blue → custom colors PATCH === */
-
-/* 1) Толгой ба илгээх сум — марун */
-:root{
-  --accent:#800000;   /* топбар */
-  --send:#800000;     /* илгээх сум */
+.sidebar{
+  border-left:none !important;
+  border-right:1px solid var(--border) !important;
 }
-.topbar{ background:var(--accent) !important; }
-#sendBtn{ background:var(--send) !important; color:#fff !important; }
-
-/* 2) Миний мессежийн (цэнхэр) бөмбөлгийг зайлуулж шар-цагаан палеттаар */
-.me{
-  background:#EFEBCE !important;      /* Artic Daisy */
-  border-color:#E3DFC8 !important;
-  color:#2B2B2B !important;
-}
-
-/* 3) Sidebar товчдын текст — цагаан биш хэсгийг бараан саарал,
-      харин бараан дэвсгэртэй (m5,m7,m8) дээр цагаан хэвээр */
-.btn .t{ color:#2B2B2B !important; }
-.btn.m5 .t, .btn.m7 .t, .btn.m8 .t{ color:#fff !important; }
-
-/* 4) 4 меню (Энгийн/Багц/Тусгай/Премиум) – шинэ палетт */
-:root{
-  --tab-basic:  #A3A380; /* Olive Petal  */
-  --tab-bundle: #D7CE93; /* Golden Clover */
-  --tab-special:#EFEBCE; /* Artic Daisy   */
-  --tab-prem:   #D8A48F; /* Rose Blush    */
-}
-.gbtn[data-tab="basic"]  { background:var(--tab-basic);  color:#111 !important; }
-.gbtn[data-tab="bundle"] { background:var(--tab-bundle); color:#111 !important; }
-.gbtn[data-tab="special"]{ background:var(--tab-special);color:#111 !important; }
-.gbtn[data-tab="premium"]{ background:var(--tab-prem);   color:#111 !important; }
-
-/* 5) Input фокус — цэнхэр биш, марун акцент */
-#chatInput:focus{
-  outline:none;
-  border-color:#800000 !important;
-  box-shadow:0 0 0 2px #80000022;
-}
-
-/* 6) Линкүүд цэнхэр бүү байг */
-a{ color:#2B2B2B !important; }
-/* ЭНЭГИЙГ <style> доторх :root хэсэгтээ ОРШИН БАЙГАА утгууд дээрээ
-   эсвэл style-ийн ТӨГСГӨЛД нэмж бичээд өөрийн хүссэн тоог тавина. */
-:root{
-  --w: 380px;     /* нийт өргөн  (жишээ: 360 → 380/400px бол чат тал илүү өргөн) */
-  --h: 78vh;      /* нийт өндөр  (жишээ: 74vh → 78–82vh) */
-  --sidebar: 180px; /* sidebar өргөн (210–220px байсныг 160–190px болговол чат тал тэлнэ) */
-}
-/* Grid багана – sidebar + chat */
-.app{ grid-template-columns: var(--sidebar) 1fr !important; }
-/* ЭНЭГИЙГ STYLE-ИЙН СҮҮЛД НЭМ */
-.topbar{ background:#800000 !important; }
-#sendBtn{ background:#800000 !important; color:#fff !important; }
-const app = document.getElementById('app');
-const chatInput = document.getElementById('chatInput');
-const chatForm = document.getElementById('chatForm') || document.querySelector('.chat-input');
-
-chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
-chatInput.addEventListener('input', ()=> app.classList.add('sidebar-hidden'));
-chatForm && chatForm.addEventListener('submit', ()=> app.classList.add('sidebar-hidden'));
-:root{
-  --tab-basic:  #A3A380; /* Olive Petal  */
-  --tab-bundle: #D7CE93; /* Golden Clover */
-  --tab-special:#EFEBCE; /* Artic Daisy   */
-  --tab-prem:   #D8A48F; /* Rose Blush    */
-}
-.gbtn[data-tab="basic"]  { background:var(--tab-basic)  !important; color:#111 !important; }
-.gbtn[data-tab="bundle"] { background:var(--tab-bundle) !important; color:#111 !important; }
-.gbtn[data-tab="special"]{ background:var(--tab-special)!important; color:#111 !important; }
-.gbtn[data-tab="premium"]{ background:var(--tab-prem)   !important; color:#111 !important; }
-/* 1) Чат тал өргөн, сайдбар нарийн */
-.app{ grid-template-columns: 200px 1fr !important; } /* 300px→200px */
-.sidebar{ min-width:180px !important; max-width:180px !important; }
-
-/* 2) Чат бичихэд sidebar нуух горим */
 .app.sidebar-hidden{ grid-template-columns:0 1fr !important; }
 .app.sidebar-hidden .sidebar{ display:none !important; }
 
-/* 3) Илгээх сум ба толгой (хаалттай үлдсэн тохиолдолд баталгаажуулалт) */
-.topbar{ background:#800000 !important; }
-#sendBtn{ background:#800000 !important; color:#fff !important; }
+/* “Ярилцая” хоёр товчийг нуух */
+#talkAI, #talkHuman{ display:none !important; }
 
-/* 4) Миний (me) мессеж – цэнхэрийг авч дулаан шар болгож байна */
-.me{ background:#EFEBCE !important; border-color:#E3DFC8 !important; color:#2B2B2B !important; }
-
-/* 5) 4 меню – таны ОДООГИЙН бүтэц: #guideTabs > button  */
-:root{
-  --tab-basic:  #A3A380; /* Энгийн */
-  --tab-bundle: #D7CE93; /* Багц */
-  --tab-special:#EFEBCE; /* Тусгай */
-  --tab-prem:   #D8A48F; /* Премиум */
+/* Илгээх сумЫГ ГАРГАНА (өмнөх нуусан дүрмийг цуцлав) */
+#sendBtn{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-width:34px !important; height:34px !important; padding:0 10px !important;
 }
-/* доош цуваа, sticky – нааш цааш хөдлөхгүй */
-#guideTabs{ display:flex !important; flex-direction:column !important; gap:6px !important; position:sticky; bottom:0; }
-#guideTabs button{ border-radius:999px !important; border:1px solid var(--border) !important; padding:8px 10px !important; text-align:left !important; }
-#guideTabs button[data-tab="standard"]{ background:var(--tab-basic) !important;  color:#111 !important; }
-#guideTabs button[data-tab="bundle"]  { background:var(--tab-bundle) !important; color:#111 !important; }
-#guideTabs button[data-tab="special"] { background:var(--tab-special) !important; color:#111 !important; }
-#guideTabs button[data-tab="premium"] { background:var(--tab-prem) !important;   color:#111 !important; }
-#guideTabs button.active{ outline:2px solid rgba(0,0,0,.15) !important; }
 
-/* 6) Sidebar товч дээр “цэнхэр” текст харагдаж байвал цагаан/хар болгож өгнө */
-.btn{ color:#111 !important; }
-.btn .sub{ color:#111 !important; }
+/* guideSection байрлал (reset) + табыг гарчгийн яг дор sticky болгох */
+#guideSection{
+  order:initial !important;
+  margin-top:0 !important;
+  position:static !important;
+  max-height:none !important;
+  overflow:visible !important;
+  padding-top:8px !important;
+}
+#guideSection .menu-title{ padding:6px 12px 4px !important; margin:0 !important; }
+#guideTabs{
+  position:sticky !important; top:0 !important; z-index:1 !important;
+  margin-top:4px !important;
+  padding:0 0 6px !important;
+  background:#fff !important;
+  border-bottom:1px dashed var(--border) !important;
+  display:flex !important; flex-direction:column !important; gap:6px !important;
+}
+#guideTabs button{
+  height:36px !important; padding:6px 10px !important;
+  border-radius:12px !important; font-size:13px !important; line-height:22px !important;
+  text-align:left !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important;
+}
+
+/* 30 чат – намхан, нэг мөр */
+#guideSection .chip-row{ display:grid !important; grid-template-columns:1fr !important; gap:4px !important; }
+#guideSection .chip{
+  height:34px !important; padding:6px 10px !important; border-radius:10px !impo
+/* Худалдан авсан — үргэлж харагдана + мөр бүхэлдээ дардаг */
+#pinnedSection{ display:block !important; }
+#pinnedList .item{ cursor:pointer; }
+#pinnedList .item .title{ flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+// 1) Модуль бүрийн renderer-ээ энд тодорхойл
+const MODULES = {
+  program(host){
+    host.innerHTML = `
+      <h3>📜 Хөтөлбөр</h3>
+      <p>Энд та өөрийн хөтөлбөрүүдээ харна.</p>
+      <ul>
+        <li>7 хоногийн сорил</li>
+        <li>30 хоногийн чэлленж</li>
+      </ul>`;
+  },
+  service(host){
+    host.innerHTML = `
+      <h3>🛎 Үйлчилгээ</h3>
+      <button class="icon-btn">Захиалах</button>`;
+  },
+  test(host){
+    host.innerHTML = `
+      <h3>✅ Тест</h3>
+      <button class="icon-btn" id="startTest">Тест эхлүүлэх</button>`;
+    document.getElementById('startTest')?.addEventListener('click', ()=>{
+      host.innerHTML = '<p>Тест эхэллээ… (demo)</p>';
+    });
+  },
+  edu(host){
+    host.innerHTML = `<h3>📘 Сэтгэлийн боловсрол</h3>
+      <p>Сургамж, богино нийтлэлүүд…</p>`;
+  },
+  journal(host){
+    host.innerHTML = `<h3>📝 Өдрийн тэмдэглэл</h3>
+      <textarea style="width:100%;height:160px"></textarea>
+      <div style="margin-top:8px"><button class="icon-btn">Хадгалах</button></div>`;
+  },
+  account(host){
+    host.innerHTML = `<h3>👤 Миний бүртгэл</h3>
+      <p>Нэр: ${userNameEl.textContent}</p>
+      <p>Код: ${userCodeEl.textContent}</p>`;
+  },
+  secret(host){
+    host.innerHTML = `<h3>🔏 Миний нууц</h3>
+      <p>Энд та нууц тэмдэглэлээ хадгална.</p>`;
+  }
+};
+
+// 2) Нэг газар нийтлэг нээх функц
+function openModule(key, title){
+  topTitle.textContent = 'Оюунсанаа чат — ' + title;
+  chatName.textContent = title;
+  chatSub.textContent  = '—';
+  chatBody.innerHTML   = '<div id="moduleHost" style="padding:10px"></div>';
+  const host = document.getElementById('moduleHost');
+  (MODULES[key] || ((h)=> h.innerHTML='<p>Агуулга бэлдээгүй байна.</p>'))(host);
+}
+
+// 3) Үндсэн меню дээр дарвал openModule() руу явуул
+mainMenus.addEventListener('click',(e)=>{
+  const btn = e.target.closest('.btn'); if(!btn) return;
+  const key = btn.dataset.main;
+
+  if (key === 'guide'){
+    guideSec.hidden = !guideSec.hidden;
+    if (!guideSec.hidden){ /* ... өмнөх чинь хэвээр ... */ applyGuideColors(); }
+    return;
+  }
+  guideSec.hidden = true;
+  openModule(key, btn.innerText.trim());
+});
+/* Үндсэн 8 меню бичвэрийг төвд нь */
+#mainMenus .btn{ justify-content:center; }
+#mainMenus .btn .t{ text-align:center; }
+/* TOPBAR гарчгийг яг голд, тогтвортой байлгах — CSS ЛАВЛАГАА */
+.topbar{ position: relative !important; height: 52px !important; }
+.brand{
+  position: absolute !important;
+  left: 50% !important; top: 50% !important;
+  transform: translate(-50%,-50%) !important; /* x ба y-р төвд */
+  max-width: 60% !important;                  /* урт нэрийг ... болгоно */
+  text-align: center !important;
+  pointer-events: none !important;            /* зүүн/баруун товч даргахад саад болохгүй */
+}
+.brand .title{
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.left-actions, .right-actions{ position: relative !important; z-index: 2 !important; }
