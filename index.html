@@ -6,60 +6,48 @@
 <title>Оюунсанаа чат</title>
 <style>
   :root{
-    /* — ХЭМЖЭЭ — */
-    --w: 540px;        /* нийт өргөн */
-    --h: 86vh;         /* нийт өндөр */
-    --sidebar: 240px;  /* баруун менюгийн өргөн */
+    /* ХЭМЖЭЭ */
+    --w: 520px;
+    --h: 84vh;
+    --sidebar: 300px;     /* багтахгүй бол 320 болгож болно */
+    --y: 160px;           /* цонхыг дээдээс доош буулгах */
 
-    /* — ӨНГӨ — */
-    --accent:#800000;  /* толгой + X + сум */
-    --send:#800000;    /* илгээх сум */
-    --panel:#f6f7f9; --border:#e5e7eb; --txt:#111827; --muted
-    :#6b7280;
+    /* ӨНГӨ */
+    --accent:#800000; --send:#800000;
+    --panel:#f6f7f9; --border:#e5e7eb; --txt:#111827; --muted:#6b7280;
 
-    /* — 4 табын өнгө — */
-    --tab-basic:#A3A380;   /* Энгийн */
-    --tab-bundle:#D7CE93;  /* Багц */
-    --tab-special:#EFEBCE; /* Тусгай */
-    --tab-prem:#D8A48F;    /* Премиум */
+    /* Табын фонтууд */
+    --tab-basic:#A3A380; --tab-bundle:#D7CE93; --tab-special:#EFEBCE; --tab-prem:#D8A48F;
 
-    /* — 8 үндсэн товчны палетт — (зурагт үзүүлсэн өнгө) */
-    --m1:#F1F0E2; /* Сэтгэлийн хөтөч */
-    --m2:#E4C7B7; /* Хөтөлбөр */
-    --m3:#BBAA91; /* Үйлчилгээ */
-    --m4:#C39D88; /* Тест */
-    --m5:#A47864; /* Сэтгэлийн боловсрол */
-    --m6:#A28776; /* Өдрийн тэмдэглэл */
-    --m7:#8B645A; /* Миний бүртгэл */
-    --m8:#56443F; /* Нууц цонх */
+    /* 8 товчны палетт (ерөнхий) */
+    --m1:#F1F0E2; --m2:#E4C7B7; --m3:#BBAA91; --m4:#C39D88;
+    --m5:#A47864; --m6:#A28776; --m7:#8B645A; --m8:#56443F;
   }
 
   *{box-sizing:border-box}
   html,body{height:100%}
   body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,Helvetica,sans-serif;color:var(--txt);background:#fff}
 
-  /* — APP (баруун талд меню) — */
+  /* APP */
   .app{
-    position:fixed; right:16px; bottom:16px;
+    position:fixed; right:16px; top:var(--y);
     width:var(--w); height:var(--h); max-width:96vw;
-    background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden;
-    box-shadow:0 10px 28px rgba(0,0,0,.18);
-    display:grid; grid-template-columns:1fr var(--sidebar); grid-template-rows:52px 1fr;
-    grid-template-areas:"topbar topbar" "main sidebar"; z-index:9999;
+    border:1px solid var(--border); border-radius:14px; overflow:hidden;
+    background:#fff; box-shadow:0 10px 28px rgba(0,0,0,.18);
+    display:grid; grid-template-columns: var(--sidebar) 1fr; grid-template-rows:52px 1fr;
+    grid-template-areas:"topbar topbar" "sidebar main"; z-index:9999;
   }
-  .app.sidebar-hidden{ grid-template-columns:1fr 0; }
+  .app.sidebar-hidden{ grid-template-columns:0 1fr; }
   .app.sidebar-hidden .sidebar{ display:none; }
 
-  /* — TOPBAR — */
+  /* TOPBAR */
   .topbar{grid-area:topbar; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 10px; background:var(--accent); color:#fff}
-  .left-actions{display:flex; align-items:center; gap:6px}
-  .right-actions{display:flex; align-items:center; gap:6px}
   .ghost{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:8px; padding:8px 10px; cursor:pointer}
   .ghost:hover{background:rgba(255,255,255,.22)}
   .brand{min-width:0; font-weight:600}
   .brand .title{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 
-  /* — MAIN CHAT — */
+  /* MAIN CHAT */
   .main{grid-area:main; display:flex; flex-direction:column; min-width:0}
   .chat-header{height:46px; display:flex; align-items:center; justify-content:space-between; padding:0 10px; border-bottom:1px solid var(--border); background:#fff}
   .chat-body{flex:1; overflow:auto; background:var(--panel); padding:14px}
@@ -70,48 +58,80 @@
   .field{flex:1; display:flex; align-items:center; gap:8px; border:1px solid var(--border); border-radius:12px; padding:6px 8px; background:#fff}
   .field input{flex:1; border:0; outline:0; font-size:14px; padding:8px}
   .icon-btn{border:1px solid var(--border); background:#fff; border-radius:10px; padding:8px 10px; cursor:pointer}
-  #sendBtn{background:var(--send); color:#fff; border:0}
+  #sendBtn{background:var(--send); color:#fff; border:0; display:inline-flex; align-items:center; justify-content:center; min-width:34px; height:34px; padding:0 10px;}
 
-  /* — SIDEBAR (баруун) — */
-  .sidebar{grid-area:sidebar; min-width:var(--sidebar); max-width:var(--sidebar); border-left:1px solid var(--border); background:#fafafa; display:flex; flex-direction:column; overflow:auto}
+  /* SIDEBAR (зүүн) */
+  .sidebar{
+    grid-area:sidebar; min-width:var(--sidebar); max-width:var(--sidebar);
+    border-right:1px solid var(--border); background:#fafafa;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
   .user-block{padding:10px 12px; border-bottom:1px dashed var(--border); background:#fff; display:flex; align-items:center; gap:8px}
   .user-block .name{font-weight:600}
   .user-block .code{font-size:12px; color:var(--muted)}
-  .menu-title{font:600 11px/1.2 Inter,system-ui; color:var(--muted); padding:10px 12px 6px}
-  .menu-grid{display:grid; grid-template-columns:1fr; gap:6px; padding:0 12px 12px}
+  .menu-title{font:600 11px/1.2 Inter,system-ui; color:var(--muted); padding:8px 12px 2px}
+  .menu-grid{display:grid; grid-template-columns:1fr; gap:6px; padding:0 12px 10px}
   .btn{
-    display:flex; align-items:center; gap:10px; padding:10px 12px;
+    display:flex; align-items:center; gap:10px; padding:8px 10px;
     border:1px solid var(--border); border-radius:12px; cursor:pointer; background:#fff;
-    min-height:44px; /* урт нарийн товч */
+    min-height:40px;
   }
   .btn .t{flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#2B2B2B}
   .btn:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
-  /* палетт */
   .m1{background:var(--m1)} .m2{background:var(--m2)} .m3{background:var(--m3)} .m4{background:var(--m4)}
   .m5{background:var(--m5)} .m6{background:var(--m6)} .m7{background:var(--m7)} .m8{background:var(--m8)}
   .m5 .t,.m7 .t,.m8 .t{color:#fff}
 
-  /* — Guide (Сэтгэлийн хөтөч) — */
-  #guideSection{padding:10px 12px 12px; background:#fff; border-top:1px solid var(--border)}
-  #guideTabs{display:flex; flex-direction:column; gap:6px}
-  #guideTabs button{border:1px solid var(--border); border-radius:999px; padding:8px 10px; text-align:left; cursor:pointer; color:#111; background:#fff}
+  /* Guide (Сэтгэлийн хөтөч) */
+  #guideSection{padding:8px 12px 10px; background:#fff; border-top:1px solid var(--border); max-height:48vh; overflow:auto;}
+  #guideSection .menu-title{ padding:6px 12px 4px; margin:0; }
+  #guideTabs{
+    position:sticky; top:0; z-index:1; background:#fff;
+    display:flex; flex-direction:column; gap:6px; padding:0 0 6px;
+    border-bottom:1px dashed var(--border);
+  }
+  #guideTabs button{
+    border:1px solid var(--border); border-radius:12px; padding:6px 10px;
+    text-align:left; cursor:pointer; color:#111; background:#fff;
+    height:36px; line-height:22px; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
   #guideTabs [data-tab="standard"]{background:var(--tab-basic)}
   #guideTabs [data-tab="bundle"]  {background:var(--tab-bundle)}
   #guideTabs [data-tab="special"] {background:var(--tab-special)}
   #guideTabs [data-tab="premium"] {background:var(--tab-prem)}
-  #guideTabs button.active{outline:2px solid rgba(0,0,0,.15)}
+  #guideTabs button.active{outline:2px solid rgba(0,0,0,.12)}
+
   .guide-body{display:none; margin-top:8px}
   .guide-body.active{display:block}
-  .chip-row{display:grid; grid-template-columns:1fr; gap:6px}
-  .chip{border:1px solid var(--border); background:#fff; border-radius:10px; padding:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer}
-  .chip .meta{font-size:12px; color:#6b7280}
-  .chip .star{margin-right:6px}
+  .chip-row{display:grid; grid-template-columns:1fr; gap:4px}
+  .chip{
+    border:1px solid var(--border); background:#fff; border-radius:10px;
+    padding:6px 10px; height:34px;
+    display:flex; justify-content:space-between; align-items:center; cursor:pointer
+  }
+  .chip > div{
+    display:flex; align-items:center; gap:8px;
+    max-width:calc(100% - 64px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .chip > div > div:first-child{ font-size:13px; line-height:18px; }
+  .chip .meta{font-size:11px; line-height:14px; color:#6b7280; opacity:.85}
+  .chip .icon-btn{ min-width:26px; height:26px; padding:0 6px; font-size:12px; line-height:1; border-radius:8px }
 
-  /* — Purchased — */
+  /* Purchased */
   .pinned{padding:8px 12px 12px; border-top:1px solid var(--border); background:#fff}
-  .pinned .item{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px; border:1px solid var(--border); border-radius:10px; margin-top:6px; background:#fff}
+  .pinned .item{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:6px 10px; margin:4px 0; border:1px solid var(--border); border-radius:8px; min-height:36px; background:#fff
+  }
+  .pinned .item span{
+    font-size:14px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .pinned .item .icon-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:26px; height:26px; padding:0 6px; font-size:12px; line-height:1; border-radius:8px
+  }
 
-  /* — BRAILLE (тусгай → харааны бэрхшээлтэй) — */
+  /* BRAILLE */
   .app.braille-on, .app.braille-on .chat-body, .app.braille-on .msg{
     font-family:"Apple Braille","SimBraille","Arial Unicode MS",Arial,system-ui;
     letter-spacing:.02em;
@@ -144,13 +164,12 @@
         <div class="sub" id="chatSub" style="color:var(--muted);font-size:12px">Сонгосон чатны нэр энд гарна</div>
       </div>
       <div>
-        <button class="icon-btn" id="talkAI" title="Ярилцая (AI)">Ярилцая</button>
-        <button class="icon-btn" id="talkHuman" title="Ярилцая (Зөвлөх)">Ярилцая</button>
+        <!-- Ярилцая хоёр товчийг нуусан -->
       </div>
     </header>
 
     <section class="chat-body" id="chatBody">
-      <div class="msg bot">Сайн байна уу! Баруун талын 8 товчноос нэгийг дарж туршаарай.</div>
+      <div class="msg bot">Сайн байна уу! Зүүн талын 8 товчноос нэгийг дарж туршаарай.</div>
     </section>
 
     <footer class="chat-input" id="chatForm">
@@ -162,7 +181,7 @@
     </footer>
   </main>
 
-  <!-- SIDEBAR (баруун) -->
+  <!-- SIDEBAR (зүүн) -->
   <aside class="sidebar" id="sidebar">
     <div class="user-block">
       <div>
@@ -173,24 +192,24 @@
 
     <div class="menu-title">Үндсэн цэс (8)</div>
     <div class="menu-grid" id="mainMenus">
-      <button class="btn m1" data-main="guide"><span class="t">🧠 Сэтгэлийн хөтөч</span></button>
       <button class="btn m2" data-main="program"><span class="t">📜 Хөтөлбөр</span></button>
       <button class="btn m3" data-main="service"><span class="t">🛎 Үйлчилгээ</span></button>
       <button class="btn m4" data-main="test"><span class="t">✅ Тест</span></button>
       <button class="btn m5" data-main="edu"><span class="t">📘 Сэтгэлийн боловсрол</span></button>
       <button class="btn m6" data-main="journal"><span class="t">📝 Өдрийн тэмдэглэл</span></button>
       <button class="btn m7" data-main="account"><span class="t">👤 Миний бүртгэл</span></button>
-      <button class="btn m8" data-main="secret"><span class="t">🔒 Нууц цонх</span></button>
+      <button class="btn m8" data-main="secret"><span class="t">🔏 Миний нууц</span></button>
+      <button class="btn m1" data-main="guide"><span class="t">🧠 Сэтгэлийн хөтөч</span></button>
     </div>
 
     <!-- Сэтгэлийн хөтөч -->
     <section id="guideSection" hidden>
-      <div class="menu-title">🧠 Сэтгэлийн хөтөч</div>
+      <div class="menu-title">💬 Чатууд</div>
       <div id="guideTabs">
-        <button data-tab="standard">Энгийн</button>
-        <button data-tab="bundle">Багц</button>
-        <button data-tab="special">Тусгай</button>
-        <button data-tab="premium">⭐ Премиум</button>
+        <button data-tab="standard">Энгийн (чат)</button>
+        <button data-tab="bundle">Багц (чат)</button>
+        <button data-tab="special">Тусгай хэрэгцээт (чат)</button>
+        <button data-tab="premium">⭐ Премиум (чат)</button>
       </div>
       <div class="guide-body" data-body="standard"></div>
       <div class="guide-body" data-body="bundle"></div>
@@ -208,7 +227,7 @@
 
 <script>
 (function(){
-  // ===== Элементүүд =====
+  // ====== Элементүүд ======
   const app        = document.getElementById('app');
   const sidebar    = document.getElementById('sidebar');
   const hamburger  = document.getElementById('hamburger');
@@ -232,13 +251,13 @@
   const pinnedSec  = document.getElementById('pinnedSection');
   const pinnedList = document.getElementById('pinnedList');
 
-  // ===== Хэрэглэгчийн нэр/код (demo) =====
+  // ====== Хэрэглэгчийн нэр/код ======
   const savedCode = localStorage.getItem('oy_reg_code') || '—';
   const savedName = localStorage.getItem('oy_user_name') || 'Зочин';
   userCodeEl.textContent = savedCode;
   userNameEl.textContent = savedName;
 
-  // ===== Demo data =====
+  // ====== Demo data ======
   const DATA = {
     standard: [
       {id:'st-01', name:'Бага балчир нас (0–7)', meta:'ST-01'},
@@ -273,7 +292,7 @@
     ],
   };
 
-  // ===== Хөтөчийн жагсаалт рэндэр =====
+  // ====== Guide bodies render ======
   function renderBody(key){
     const body = guideSec.querySelector('.guide-body[data-body="'+key+'"]');
     if(!body) return;
@@ -284,7 +303,9 @@
       const el = document.createElement('div');
       el.className = 'chip';
       el.innerHTML = '<div><div>'+item.name+'</div><div class="meta">'+(item.meta||'')+'</div></div><button class="icon-btn" title="Хадгалах">📌</button>';
+      // open
       el.addEventListener('click', (e)=>{ if(e.target.tagName==='BUTTON') return; openChat(item); });
+      // pin
       el.querySelector('button').addEventListener('click', (e)=>{ e.stopPropagation(); togglePurchase(item); });
       wrap.appendChild(el);
     });
@@ -292,7 +313,7 @@
   }
   ['standard','bundle','special','premium'].forEach(renderBody);
 
-  // ===== 8 үндсэн меню =====
+  // ====== 8 үндсэн меню ======
   mainMenus.addEventListener('click',(e)=>{
     const btn = e.target.closest('.btn'); if(!btn) return;
     const key = btn.dataset.main;
@@ -302,7 +323,8 @@
       if (!guideSec.hidden){
         guideTabs.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
         guideSec.querySelectorAll('.guide-body').forEach(b=>{ b.classList.remove('active'); b.style.display='none'; });
-        guideSec.scrollIntoView({behavior:'smooth', block:'nearest'});
+        guideSec.scrollIntoView({behavior:'smooth', block:'start'});
+        applyGuideColors(); // нээгдэхэд өнгө суулга
       }
       return;
     }
@@ -310,7 +332,7 @@
     openChat({id:key, name: btn.innerText.trim(), meta:'—'});
   });
 
-  // ===== 4 таб =====
+  // ====== 4 таб ======
   guideTabs.addEventListener('click',(e)=>{
     const t = e.target.closest('button[data-tab]'); if(!t) return;
     guideTabs.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
@@ -321,9 +343,11 @@
       b.classList.toggle('active', on);
       b.style.display = on ? 'block' : 'none';
     });
+    applyGuideColors();                              // таб солих бүрт өнгө дахин тавина
+    guideSec.scrollTo({top:0, behavior:'smooth'});   // дотроо дээрээс эхлүүлнэ
   });
 
-  // ===== Chat =====
+  // ====== Chat logic ======
   function htmlEscape(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   function addMsg(role, html){
     const el = document.createElement('div');
@@ -334,18 +358,23 @@
   }
 
   function openChat(item){
-    app.classList.toggle('braille-on', !!item.braille);     // Braille горим
-    topTitle.textContent = 'Оюунсанаа чат — ' + item.name;  // Толгой
+    // Брайл горим ON/OFF
+    app.classList.toggle('braille-on', !!item.braille);
+
+    topTitle.textContent = 'Оюунсанаа чат — ' + item.name;
     chatName.textContent = item.name;
     chatSub.textContent  = item.meta || '';
     chatBody.innerHTML = '';
     addMsg('bot', 'Сайн байна уу! <b>'+htmlEscape(item.name)+'</b> нээгдлээ. Юу асуух вэ?');
 
-    // чатлах үед меню алга болно
-    app.classList.add('sidebar-hidden');
+    // МЕНЮГ НУУХГҮЙ (тогтвортой харагдана)
+    // app.classList.add('sidebar-hidden');
+
     chatInput.focus();
+    // хөтчийг харагдуулж, өнгийг баталгаажуулъя
+    guideSec.hidden = false;
+    applyGuideColors();
   }
-  window.openChat = openChat;
 
   function send(){
     const t = (chatInput.value||'').trim(); if(!t) return;
@@ -357,12 +386,12 @@
   chatInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); }});
   chatInput.addEventListener('focus', ()=> app.classList.add('sidebar-hidden'));
 
-  // зураг (demo)
+  // зураг
   addImage.addEventListener('click', ()=>{
     addMsg('me', 'Зураг илгээх (демо): <i>файл сонголт энд нэмэгдэнэ</i>');
   });
 
-  // ===== Purchased =====
+  // ====== Purchased (pin) ======
   let purchased = JSON.parse(localStorage.getItem('oy_purchased')||'[]');
   function togglePurchase(item){
     const exists = purchased.find(x=>x.id===item.id);
@@ -376,7 +405,7 @@
     pinnedSec.hidden=false;
     purchased.forEach(it=>{
       const row=document.createElement('div'); row.className='item';
-      row.innerHTML=`<span>${it.name}</span><div><button class="icon-btn" title="Нээх">▶</button> <button class="icon-btn" title="Устгах">✕</button></div>`;
+      row.innerHTML = `<span>${it.name}</span><div><button class="icon-btn" title="Нээх">▶</button> <button class="icon-btn" title="Устгах">✕</button></div>`;
       row.querySelectorAll('button')[0].onclick=()=>openChat(it);
       row.querySelectorAll('button')[1].onclick=()=>{
         purchased=purchased.filter(x=>x.id!==it.id);
@@ -388,17 +417,59 @@
   }
   refreshPinned();
 
-  // ===== Topbar actions =====
+  // ====== Topbar actions ======
   hamburger.addEventListener('click', ()=> app.classList.toggle('sidebar-hidden'));
   closeBtn.addEventListener('click', ()=>{
-    app.style.display='none'; // demo хаалт
+    app.style.display='none';
     alert('Цонх хаагдлаа (демо).');
   });
 
-  // ===== Ярилцая 2 товч (demo) =====
-  document.getElementById('talkAI').addEventListener('click', ()=> addMsg('bot','(AI) Сайн байна уу, би туслах байна.'));
-  document.getElementById('talkHuman').addEventListener('click', ()=> addMsg('bot','(Зөвлөх) Танд хэрхэн туслах вэ?'));
+  // ====== Палетт будалт (өнгө) — INLINE !important тавина ======
+  const COLORS = {
+    standard: ["#E1D9C9","#AE9372","#B27D57","#7F4B30","#A28776","#7D8769","#424C21","#173125"],
+    bundle:   ["#D8A48F","#957C60","#EFEBCE","#ABAC97","#433A29"],
+    special:  ["#353326","#897E45"],
+    premium:  "#7F4D30"
+  };
+
+  function paintList(key, arr){
+    const body = guideSec.querySelector(`.guide-body[data-body="${key}"]`);
+    if(!body) return;
+    body.querySelectorAll('.chip').forEach((chip,i)=>{
+      const color = Array.isArray(arr) ? (arr[i] || arr[arr.length-1]) : arr;
+      // дэвсгэр + хил
+      chip.style.setProperty('background', color, 'important');
+      chip.style.setProperty('border-color', color, 'important');
+      // текстийн өнгө (контраст)
+      const c = color.slice(1);
+      const r = parseInt(c.substr(0,2),16), g = parseInt(c.substr(2,2),16), b = parseInt(c.substr(4,2),16);
+      const L = (0.2126*r+0.7152*g+0.0722*b)/255;
+      const text = L < 0.55 ? '#fff' : '#1b1b1b';
+      chip.querySelectorAll('div, .meta').forEach(el=>{
+        el.style.setProperty('color', text, 'important');
+        el.style.opacity = 1;
+      });
+    });
+  }
+  function applyGuideColors(){
+    paintList('standard', COLORS.standard);
+    paintList('bundle',   COLORS.bundle);
+    paintList('special',  COLORS.special);
+    paintList('premium',  Array(50).fill(COLORS.premium));
+  }
+
+  // анхны render-ийн дараа нэг удаа
+  applyGuideColors();
+
+  // guideSection-д өөрчлөлт орж байвал дахин будаж бай
+  new MutationObserver(()=> applyGuideColors())
+    .observe(guideSec, {childList:true, subtree:true});
+
 })();
 </script>
+  
 </body>
 </html>
+
+
+
